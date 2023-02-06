@@ -1,1 +1,3 @@
 # Kitchen-Chaos-Tutorial
+This very exciting project, a 10 hour course making a complete game from scratch! The game features lots of interesting systems which makes for a great learning project. This is for both Beginners and Intermediate users who want to learn how to write good high quality clean code and learn to manage a relatively complex project with a good structure. The game itself is a fun Arcade game, using what you learn by making this game will enable you to build just about any game you can think of.
+![image](https://user-images.githubusercontent.com/107381069/216956504-bfc318f2-6026-4a6a-8e87-1e1ecb509ad6.png)
