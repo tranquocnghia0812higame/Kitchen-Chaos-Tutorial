@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerAnimatorController : MonoBehaviour
 {
     private const string IS_WALKING = "IsWalking";
+
     [SerializeField] private Animator _animator;
     [SerializeField] private Player _player;
     // Start is called before the first frame update
