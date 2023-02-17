@@ -1,4 +1,5 @@
 
+using System;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -6,14 +7,40 @@ public class Player : MonoBehaviour
     [SerializeField] private float _movementSpeed;
     [SerializeField] private PlayerInput _inputSystem;
     [SerializeField] private Animator _animator;
+    [SerializeField] private LayerMask _counterLayerMask;
+
+
+    private Vector3 _lastInteractDirection;
     public bool IsWalking { get; private set; }
     private void Start()
     {
         _animator = GetComponentInChildren<Animator>();
         _inputSystem = GetComponentInChildren<PlayerInput>();
     }
-
     private void Update()
+    {
+        HandleMovement();
+        HandleInteract();
+    }
+
+    private void HandleInteract()
+    {
+        var inputVector = _inputSystem.InputVector;
+        Vector3 moveDir = new(inputVector.x, 0, inputVector.y);
+        float interactDistance = 2f;
+        if(moveDir != Vector3.zero)
+        {
+            _lastInteractDirection= moveDir;
+        }
+        if(Physics.Raycast(transform.position, _lastInteractDirection, out RaycastHit hitInfo,interactDistance,_counterLayerMask)) {
+            if(hitInfo.transform.TryGetComponent(out ClearCounter clearCounter))
+            {
+                clearCounter.Interact();
+            }
+        }
+    }
+
+    private void HandleMovement()
     {
         var inputVector = _inputSystem.InputVector;
         CheckWalking(inputVector);
@@ -27,9 +54,9 @@ public class Player : MonoBehaviour
         {
             //Cann't move toward move dir
             //Attemp only x movement
-            var moveDirX = new Vector3(moveDir.x,0,0).normalized;
+            var moveDirX = new Vector3(moveDir.x, 0, 0).normalized;
             canMove = !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, moveDirX, moveDistance);
-            if(canMove)
+            if (canMove)
             {
                 //Can move only on the x
                 moveDir = moveDirX;
@@ -37,9 +64,9 @@ public class Player : MonoBehaviour
             else
             {
                 //Attemp on z movement
-                var moveDirZ = new Vector3(0,0,moveDir.z).normalized;
+                var moveDirZ = new Vector3(0, 0, moveDir.z).normalized;
                 canMove = !Physics.CapsuleCast(transform.position, transform.position + Vector3.forward * playerHeight, playerRadius, moveDirZ, moveDistance);
-                if(canMove)
+                if (canMove)
                 {
                     moveDir = moveDirZ;
                 }
@@ -49,7 +76,7 @@ public class Player : MonoBehaviour
         {
             transform.position += moveDistance * moveDir;
             var rotationSpeed = 10f;
-            transform.forward = Vector3.Slerp(transform.forward, moveDir, rotationSpeed* Time.deltaTime);
+            transform.forward = Vector3.Slerp(transform.forward, moveDir, rotationSpeed * Time.deltaTime);
         }
     }
 
