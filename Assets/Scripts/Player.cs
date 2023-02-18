@@ -16,28 +16,31 @@ public class Player : MonoBehaviour
     {
         _animator = GetComponentInChildren<Animator>();
         _inputSystem = GetComponentInChildren<PlayerInput>();
-    }
-    private void Update()
-    {
-        HandleMovement();
-        HandleInteract();
+        _inputSystem.OnInteractListenEvent += PlayerInput_EventHandler;
     }
 
-    private void HandleInteract()
+    private void PlayerInput_EventHandler(object sender, EventArgs e)
     {
         var inputVector = _inputSystem.InputVector;
         Vector3 moveDir = new(inputVector.x, 0, inputVector.y);
         float interactDistance = 2f;
-        if(moveDir != Vector3.zero)
+        if (moveDir != Vector3.zero)
         {
-            _lastInteractDirection= moveDir;
+            _lastInteractDirection = moveDir;
         }
-        if(Physics.Raycast(transform.position, _lastInteractDirection, out RaycastHit hitInfo,interactDistance,_counterLayerMask)) {
-            if(hitInfo.transform.TryGetComponent(out ClearCounter clearCounter))
+        if (Physics.Raycast(transform.position, _lastInteractDirection, out RaycastHit hitInfo, interactDistance, _counterLayerMask))
+        {
+            if (hitInfo.transform.TryGetComponent(out ClearCounter clearCounter))
             {
                 clearCounter.Interact();
             }
         }
+    }
+
+    private void Update()
+    {
+        HandleMovement();
+        //HandleInteract();
     }
 
     private void HandleMovement()
@@ -75,13 +78,13 @@ public class Player : MonoBehaviour
         if (canMove)
         {
             transform.position += moveDistance * moveDir;
-            var rotationSpeed = 10f;
-            transform.forward = Vector3.Slerp(transform.forward, moveDir, rotationSpeed * Time.deltaTime);
         }
+        var rotationSpeed = 20f;
+        transform.forward = Vector3.Slerp(transform.forward, moveDir, rotationSpeed * Time.deltaTime);
     }
 
     private void CheckWalking(Vector2 inputVector)
     {
-        IsWalking = inputVector != Vector2.zero ? true: false;
+        IsWalking = inputVector != Vector2.zero;
     }
 }
