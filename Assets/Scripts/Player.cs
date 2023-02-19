@@ -9,8 +9,6 @@ public class Player : MonoBehaviour
     [SerializeField] private Animator _animator;
     [SerializeField] private LayerMask _counterLayerMask;
 
-
-    private Vector3 _lastInteractDirection;
     public bool IsWalking { get; private set; }
     private void Start()
     {
@@ -23,12 +21,8 @@ public class Player : MonoBehaviour
     {
         var inputVector = _inputSystem.InputVector;
         Vector3 moveDir = new(inputVector.x, 0, inputVector.y);
-        float interactDistance = 2f;
-        if (moveDir != Vector3.zero)
-        {
-            _lastInteractDirection = moveDir;
-        }
-        if (Physics.Raycast(transform.position, _lastInteractDirection, out RaycastHit hitInfo, interactDistance, _counterLayerMask))
+        float interactDistance = 1f;
+        if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hitInfo, interactDistance, _counterLayerMask))
         {
             if (hitInfo.transform.TryGetComponent(out ClearCounter clearCounter))
             {
